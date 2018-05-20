@@ -1,8 +1,11 @@
 #pragma once
 #include<stdio.h>
 #include<iostream>
-#include"cv.h"
-#include"highgui.h"
+#include "opencv2\opencv.hpp"
+#include <opencv2/dnn.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/core/utils/trace.hpp>
 #include"Kinect.h"
 using namespace std;
 class KinectCapture

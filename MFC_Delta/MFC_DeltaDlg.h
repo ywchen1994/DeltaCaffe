@@ -13,8 +13,9 @@
 #define ArmYAddr 0x1002
 #define ArmZAddr 0x1003
 #define ArmThetaAddr 0x1004
-#define ArmSendDone 0x1005
+#define ArmSendDoneAddr 0x1005
 using namespace cv;
+using namespace cv::dnn;
 struct CthreadParam
 {
 public:
@@ -49,10 +50,14 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
+	static VideoCapture cap;
+	static Mat frame_WebCam;
+	static Net _net;
 	modbus_t *mb;
 	static KinectCapture kinect;
 	afx_msg void OnBnClickedBtnstart();
 	static UINT MythreadFun(LPVOID LParam);
+	void Thread_Image_Cam(LPVOID lParam);
 	void Thread_Image_Depth(LPVOID lParam);
 	void ShowImage(cv::Mat Image, CWnd * pWnd);
 	static bool ObjectToWork;
@@ -64,7 +69,12 @@ public:
 	CListCtrl m_LIST_SCARA;
 	afx_msg void OnBnClickedScaraconnect();
 	void Camera2SCARA(Mat DepthImage);
-	
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
+
+	void calcCircles(const Mat & input, vector<Vec3f>& circles);
+
+    int  Caffe(Mat & input, Net & net1, const vector<Vec3f>& circles);
+	void OnTimer(UINT_PTR nIDEvent);
 	static Mat Img_Depth;
+	afx_msg void OnBnClickedTest();
+	CStatic m_Image_WebCam;
 };
