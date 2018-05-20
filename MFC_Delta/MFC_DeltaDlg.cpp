@@ -181,9 +181,9 @@ void CMFC_DeltaDlg::Thread_Image_Depth(LPVOID lParam)
 	mtx.lock();
 	while (1)
 	{
+		Mat Img_Depth;
+		kinect.DepthImage(Img_Depth);
 		
-	
-		Mat Img_Depth = cvarrToMat(kinect.DepthImage());
 
 		if (!Img_Depth.empty())
 		{

@@ -195,11 +195,11 @@ void KinectCapture::setDepthROISize(CvRect ROI, CvSize size)
 	depthSize = size;
 }
 
-IplImage* KinectCapture::RGBAImage()
+bool KinectCapture::RGBAImage(Mat &RGBA_Img)
 {
 	if (fColorOpened == false) { cerr << "Need Open"; return NULL; }
 	bool copyDone = false;
-	IplImage* pImg = nullptr;
+
 	pColorFrame = nullptr;
 
 	if (pColorFrameReader->AcquireLatestFrame(&pColorFrame) == S_OK)
@@ -207,7 +207,7 @@ IplImage* KinectCapture::RGBAImage()
 		//Copy to OpenCV image
 		if (pColorFrame->CopyConvertedFrameDataToArray(uColorBufferSize, mColorImg.data, ColorImageFormat_Bgra) == S_OK)
 		{
-			pImg = cvCloneImage(&(IplImage)mColorImg);
+			mColorImg.copyTo(RGBA_Img);
 			copyDone = true;
 		}
 		else
@@ -215,17 +215,14 @@ IplImage* KinectCapture::RGBAImage()
 
 		pColorFrame->Release();
 	}
-	if (copyDone)
-		return pImg;
-	else
-		return NULL;
+	return copyDone;
 }
 
-IplImage * KinectCapture::DepthImage()
+bool KinectCapture::DepthImage(Mat &D_Img)
 {
 	if (fDepthOpened == false) { cerr << "Need Open"; return NULL; }
 	bool fGet = false;
-	IplImage* pImg = nullptr;
+	
 
 	if (pDepthFrameReader->AcquireLatestFrame(&pDepthFrame) == S_OK)
 	{
@@ -237,26 +234,22 @@ IplImage * KinectCapture::DepthImage()
 		//convert from 16bit to 8bit
 
 		mDepthImg.convertTo(mDepthImg8bit, CV_8U, 255.0f / 825);
-		pImg = cvCloneImage(&(IplImage)mDepthImg8bit);
+		mDepthImg8bit.copyTo(D_Img);
 
 
 		fGet = true;
-
 		pDepthFrame->Release();
 	}
-
-	if (fGet)
-		return pImg;
-	else
-		return NULL;
+	return fGet;
+	
 }
 
-IplImage * KinectCapture::InfraredImage()
+bool KinectCapture::InfraredImage(Mat &IR_Img)
 {
 	if (fInfraredOpened == false) {
 		cerr << "Need Open"; return NULL; }
 	bool accessDone = false;
-	IplImage* pImg = nullptr;
+	
 	IInfraredFrame* pFrame = nullptr;
 	if (pInfraredFrameReader->AcquireLatestFrame(&pFrame) == S_OK)
 	{
@@ -265,9 +258,9 @@ IplImage * KinectCapture::InfraredImage()
 		if (pFrame->AccessUnderlyingBuffer(&uSize, &pBuffer) == S_OK)
 		{
 			cv::Mat mIRImg(iInfraredHeight, iInfraredWidth, CV_16UC1, pBuffer);
-			pImg = cvCloneImage(&(IplImage)mIRImg);
-			cvSetImageROI(pImg, depthROI);
-			cvResize(pImg, cvCreateImage(depthSize, IPL_DEPTH_16U, 1), CV_INTER_AREA);
+			
+			mIRImg.copyTo(IR_Img);
+		
 			accessDone = true;
 		}
 		else
@@ -275,11 +268,7 @@ IplImage * KinectCapture::InfraredImage()
 
 		pFrame->Release();
 	}
-
-	if (accessDone)
-		return pImg;
-	else
-		return NULL;
+		return accessDone;
 }
 void KinectCapture::Color2CameraSpace(CvPoint RGBpoint, CvPoint3D32f *CameraSpace)
 {

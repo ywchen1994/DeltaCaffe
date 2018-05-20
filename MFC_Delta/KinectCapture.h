@@ -7,6 +7,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/core/utils/trace.hpp>
 #include"Kinect.h"
+using namespace cv;
 using namespace std;
 class KinectCapture
 {
@@ -25,7 +26,7 @@ public:
 	void setColorROISize(CvRect ROI, CvSize size);
 	void setDepthROISize(CvRect ROI, CvSize size);
 
-	IplImage* RGBAImage();
+	bool RGBAImage(Mat &Img);
 	bool fColorOpened;
 	IColorFrameReader* pColorFrameReader;
 	IColorFrame* pColorFrame;
@@ -35,7 +36,7 @@ public:
 	CvSize colorSize;
 
 
-	IplImage* DepthImage();
+	bool DepthImage(Mat &D_Img);
 
 
 	bool fDepthOpened;
@@ -48,7 +49,6 @@ public:
 	CvSize depthSize;
 
 
-	IplImage* InfraredImage();
 	bool fInfraredOpened;
 	IInfraredFrameReader* pInfraredFrameReader;
 	int iInfraredWidth, iInfraredHeight;
@@ -56,6 +56,7 @@ public:
 
 
 	void Color2DepthSpace(CvPoint RGBpoint, CvPoint * Depthpoint);
+	bool InfraredImage(Mat & IR_Img);
 	void Color2CameraSpace(CvPoint RGBpoint, CvPoint3D32f * CameraSpace);
 	void Depth2CameraSpace(CvPoint Depthpoint, CvPoint3D32f * CameraSpace);
 	void Depth2ColorSpace(CvPoint Depthpoint, CvPoint * RGBpoint);
