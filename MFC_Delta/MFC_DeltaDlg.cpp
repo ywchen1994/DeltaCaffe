@@ -408,7 +408,7 @@ void CMFC_DeltaDlg::OnTimer(UINT_PTR nIDEvent)
 			{
 				str.Format(_T("%d"), ToWork);
 				m_LIST_SCARA.InsertItem(0, str);
-				str.Format(_T("%d"), tab_reg);
+				str.Format(_T("%d"), tab_reg[0]);
 				m_LIST_SCARA.SetItemText(0, 1, str);
 				m_LIST_SCARA.DeleteItem(3);
 			
@@ -444,6 +444,7 @@ void CMFC_DeltaDlg::OnTimer(UINT_PTR nIDEvent)
 					calcCircles(frame, circle);
 					
 					int ans=Caffe(frame,_net, circle);
+					frame.release();
 					modbus_write_register(mb, ArmSendDoneAddr,2);
 					
 				}
